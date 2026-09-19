@@ -88,7 +88,7 @@
 
             {{-- HEADER --}}
             <div class="px-6 py-4 border-b border-gray-200 bg-gray-50
-                        flex items-center justify-between">
+                        flex items-center justify-between gap-4">
 
                 <div>
 
@@ -99,6 +99,43 @@
                     <p class="text-xs text-gray-500 mt-1">
                         Centang alat yang ingin dipinjam.
                     </p>
+
+                </div>
+
+
+                {{-- SEARCH --}}
+                <div class="relative w-72">
+
+                    <span class="absolute inset-y-0 left-0
+                                 flex items-center pl-3
+                                 text-gray-400">
+
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             class="w-4 h-4"
+                             fill="none"
+                             viewBox="0 0 24 24"
+                             stroke="currentColor">
+
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="m21 21-4.35-4.35m0 0A7.5 7.5 0 1 0 6.04 6.04a7.5 7.5 0 0 0 10.61 10.61Z"/>
+
+                        </svg>
+
+                    </span>
+
+
+                    <input
+                        type="text"
+                        id="searchAlat"
+                        placeholder="Cari nama alat..."
+                        class="w-full pl-9 pr-3 py-2 text-sm
+                               border border-gray-300 rounded-lg
+                               bg-white
+                               focus:outline-none
+                               focus:ring-2 focus:ring-gray-400
+                               focus:border-gray-400">
 
                 </div>
 
@@ -145,11 +182,13 @@
                     </thead>
 
 
-                    <tbody class="text-gray-700 text-sm">
+                    <tbody id="daftarAlat"
+                           class="text-gray-700 text-sm">
 
                         @forelse($alats as $alat)
 
-                            <tr class="hover:bg-gray-50 transition">
+                            <tr class="alat-row hover:bg-gray-50 transition"
+                                data-nama="{{ strtolower($alat->nama_alat) }}">
 
 
                                 {{-- CHECKBOX --}}
@@ -229,8 +268,7 @@
                                 {{-- STOK --}}
                                 <td class="py-4 px-4 border-b text-center">
 
-                                    <span class="font-medium
-                                                 text-gray-800">
+                                    <span class="font-medium text-gray-800">
 
                                         {{ $alat->stok }}
 
@@ -242,13 +280,16 @@
                                 {{-- JUMLAH --}}
                                 <td class="py-4 px-4 border-b">
 
-                                    <input type="number"
-       name="jumlah[{{ $alat->id }}]"
-       value="1"
-       min="1"
-       max="{{ $alat->stok }}"
-       class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg
-              focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <input
+                                        type="number"
+                                        name="jumlah[{{ $alat->id }}]"
+                                        value="1"
+                                        min="1"
+                                        max="{{ $alat->stok }}"
+                                        class="w-full px-3 py-2 text-sm
+                                               border border-gray-300 rounded-lg
+                                               focus:outline-none
+                                               focus:ring-2 focus:ring-blue-500">
 
                                 </td>
 
@@ -270,6 +311,21 @@
                             </tr>
 
                         @endforelse
+
+
+                        {{-- HASIL PENCARIAN KOSONG --}}
+                        <tr id="tidakDitemukan"
+                            style="display: none;">
+
+                            <td colspan="6"
+                                class="py-8 px-4 text-center
+                                       text-gray-500">
+
+                                Alat yang dicari tidak ditemukan.
+
+                            </td>
+
+                        </tr>
 
                     </tbody>
 
@@ -310,5 +366,50 @@
         </div>
 
     </form>
+
+
+    {{-- SEARCH SCRIPT --}}
+    <script>
+
+        const searchAlat = document.getElementById('searchAlat');
+        const alatRows = document.querySelectorAll('.alat-row');
+        const tidakDitemukan = document.getElementById('tidakDitemukan');
+
+        searchAlat.addEventListener('input', function () {
+
+            const keyword = this.value.toLowerCase().trim();
+
+            let ditemukan = false;
+
+            alatRows.forEach(function (row) {
+
+                const namaAlat = row.getAttribute('data-nama');
+
+                if (namaAlat.includes(keyword)) {
+
+                    row.style.display = '';
+                    ditemukan = true;
+
+                } else {
+
+                    row.style.display = 'none';
+
+                }
+
+            });
+
+            if (ditemukan || keyword === '') {
+
+                tidakDitemukan.style.display = 'none';
+
+            } else {
+
+                tidakDitemukan.style.display = '';
+
+            }
+
+        });
+
+    </script>
 
 @endsection

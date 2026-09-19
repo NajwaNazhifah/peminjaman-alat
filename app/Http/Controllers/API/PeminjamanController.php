@@ -1,4 +1,3 @@
-
 <?php
 
 namespace App\Http\Controllers\API;
@@ -51,7 +50,6 @@ class PeminjamanController extends Controller
                 ]);
 
                 foreach ($request->items as $item) {
-                    // lockForUpdate mengunci baris data di database sampai transaksi ini COMMIT
                     $alat = Alat::lockForUpdate()->findOrFail($item['alat_id']);
 
                     if ($alat->stok < $item['jumlah']) {
@@ -134,7 +132,6 @@ class PeminjamanController extends Controller
                 $peminjaman->detailPinjams()->delete();
 
                 foreach ($request->items as $item) {
-                    // Ditambahkan lockForUpdate agar konsisten aman dari race condition saat update data draft
                     $alat = Alat::lockForUpdate()->findOrFail($item['alat_id']);
 
                     if ($alat->stok < $item['jumlah']) {
@@ -209,7 +206,6 @@ class PeminjamanController extends Controller
                 ]);
 
                 foreach ($peminjaman->detailPinjams as $detail) {
-                    // Mengunci baris alat demi validasi final sebelum stok dikurangi
                     $alat = Alat::lockForUpdate()->findOrFail($detail->alat_id);
 
                     if ($alat->stok < $detail->jumlah) {
@@ -255,4 +251,3 @@ class PeminjamanController extends Controller
         ]);
     }
 }
-
