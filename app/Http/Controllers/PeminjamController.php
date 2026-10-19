@@ -145,4 +145,33 @@ public function dashboard()
 
         return view('peminjam.riwayat', compact('peminjamans'));
     }
+    public function ajukanPengembalian($id)
+{
+    $peminjaman = Peminjaman::where('id', $id)
+        ->where('user_id', auth()->id())
+        ->firstOrFail();
+
+    if (!in_array($peminjaman->status, ['dipinjam', 'telat'])) {
+        return back()->with(
+            'error',
+            'Peminjaman ini tidak dapat diajukan untuk pengembalian.'
+        );
+    }
+
+    if ($peminjaman->pengajuan_kembali_at !== null) {
+        return back()->with(
+            'error',
+            'Pengajuan pengembalian sudah dikirim sebelumnya.'
+        );
+    }
+
+    $peminjaman->update([
+        'pengajuan_kembali_at' => now(),
+    ]);
+
+    return back()->with(
+        'success',
+        'Pengajuan pengembalian berhasil dikirim. Silakan tunggu petugas memprosesnya.'
+    );
+}
 }

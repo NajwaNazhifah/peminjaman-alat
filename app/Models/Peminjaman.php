@@ -15,7 +15,8 @@ class Peminjaman extends Model
         'user_id',
         'tgl_pinjam',
         'tgl_kembali_plan',
-        'status'
+        'status',
+        'pengajuan_kembali_at',
     ];
 
     protected function casts(): array
@@ -23,6 +24,7 @@ class Peminjaman extends Model
         return [
             'tgl_pinjam' => 'date:Y-m-d',
             'tgl_kembali_plan' => 'date:Y-m-d',
+            'pengajuan_kembali_at' => 'datetime',
         ];
     }
 
