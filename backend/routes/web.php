@@ -6,6 +6,7 @@ use App\Http\Controllers\PetugasController;
 use App\Http\Controllers\PeminjamController;
 use App\Http\Controllers\PengembalianController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Auth\RegisterController;
 
 // Halaman Utama
 Route::get('/', function () {
@@ -128,9 +129,17 @@ Route::middleware(['auth', 'role:peminjam'])
 
 
 // ==========================================
-// LOGIN
+// LOGIN & REGISTRASI
 // ==========================================
 Route::middleware('guest')->group(function () {
+
+    // Registrasi Peminjam
+    Route::get('/register', [RegisterController::class, 'showRegistrationForm'])
+        ->name('register');
+
+    Route::post('/register', [RegisterController::class, 'register']);
+
+    // Login
     Route::get('/login', [AuthController::class, 'showLoginForm'])
         ->name('login');
 
