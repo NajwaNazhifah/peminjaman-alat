@@ -11,6 +11,7 @@ use App\Models\Pengembalian;
 use App\Models\DetailPinjam;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
@@ -284,12 +285,19 @@ class AdminController extends Controller
     {
         $user = User::findOrFail($id);
 
-        $user->delete();
-
+    // Admin tidak boleh menghapus akun sendiri
+        if ($user->id === Auth::id()) {
         return redirect()
             ->route('admin.user.index')
-            ->with('success', 'User berhasil dihapus.');
+            ->with('error', 'Admin tidak bisa menghapus akun sendiri.');
     }
+
+    $user->delete();
+
+    return redirect()
+        ->route('admin.user.index')
+        ->with('success', 'User berhasil dihapus.');
+}
 
     // 1. Menampilkan daftar kategori
     public function indexKategori(Request $request)
